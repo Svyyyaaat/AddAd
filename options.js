@@ -48,6 +48,29 @@ let websites = [];
 let whitelist = [];
 let siteSettings = {}; // { [pattern]: { customIntensity, intensity, reloadMinutes } }
 
+// ===================== THEME =====================
+const themeButtons = document.querySelectorAll(".theme-btn");
+
+function applyTheme(theme) {
+  if (theme === "light" || theme === "dark") {
+    document.documentElement.dataset.theme = theme;
+  } else {
+    theme = "auto";
+    delete document.documentElement.dataset.theme;
+  }
+  themeButtons.forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.themeChoice === theme);
+  });
+}
+
+themeButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const theme = btn.dataset.themeChoice;
+    browser.storage.local.set({ theme });
+    applyTheme(theme);
+  });
+});
+
 // ===================== THE DODGING REMOVE BUTTON =====================
 // If the site is open right now (or was in the last few minutes), the Remove
 // button plays hard to get: it jumps away and demands extra clicks.
@@ -372,8 +395,9 @@ saveRedirectBtn.addEventListener("click", () => {
 // ===================== LOAD SAVED DATA =====================
 browser.storage.local.get([
   "websites", "whitelist", "siteSettings", "intensity", "reloadMinutes", "redirectURL",
-  "pingPong", "pingPongCount",
+  "pingPong", "pingPongCount", "theme",
 ]).then((data) => {
+  applyTheme(data.theme);
   websites = data.websites || [];
   whitelist = data.whitelist || [];
   siteSettings = data.siteSettings || {};

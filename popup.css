@@ -3,7 +3,28 @@
   --card: #fffdf6;
   --ink: #1b1b1b;
   --ink-soft: #6b6557;
+  --hover: #efe8d8;
   --accent: #e02d1b;
+}
+
+:root[data-theme="dark"] {
+  --paper: #171513;
+  --card: #211e1a;
+  --ink: #ece7db;
+  --ink-soft: #99917e;
+  --hover: #2b2721;
+  --accent: #f04432;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #171513;
+    --card: #211e1a;
+    --ink: #ece7db;
+    --ink-soft: #99917e;
+    --hover: #2b2721;
+    --accent: #f04432;
+  }
 }
 
 * {
@@ -30,9 +51,6 @@ body {
 .popup-icon {
   width: 22px;
   height: 22px;
-  border: 1px solid var(--ink);
-  border-radius: 5px;
-  background: var(--card);
 }
 
 .popup-title {
@@ -58,12 +76,12 @@ body {
 }
 
 .menu-btn:hover {
-  background: #efe8d8;
+  background: var(--hover);
 }
 
 .menu-btn.destroy:hover {
   background: var(--accent);
-  color: #fff;
+  color: var(--paper);
 }
 
 .menu-btn:last-of-type {

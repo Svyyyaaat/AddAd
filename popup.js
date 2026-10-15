@@ -1,6 +1,12 @@
 // Firefox has `browser`, Chrome only has `chrome` (promise-based in MV3)
 globalThis.browser ??= globalThis.chrome;
 
+browser.storage.local.get("theme").then(({ theme }) => {
+  if (theme === "light" || theme === "dark") {
+    document.documentElement.dataset.theme = theme;
+  }
+});
+
 const statusEl = document.getElementById("popup-status");
 
 document.getElementById("settings-btn").addEventListener("click", () => {

@@ -20,6 +20,7 @@ harmed in the making of this extension.
 - **Countdown close buttons** — some ads make you wait, for authenticity
 - **Rickroll on click** — clicking an ad opens a configurable redirect URL
 - **The dodging Remove button** — try to un-target a site you've visited recently. Try.
+- **Light & dark themes** — auto (follows your OS), or forced light/dark
 - Works on **Firefox** (desktop & Android) and **Chromium-based** browsers
 
 ## Install
