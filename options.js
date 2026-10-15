@@ -48,6 +48,33 @@ let websites = [];
 let whitelist = [];
 let siteSettings = {}; // { [pattern]: { customIntensity, intensity, reloadMinutes } }
 
+// ===================== HOST PERMISSIONS =====================
+// Firefox MV3 treats host_permissions as opt-in: without the grant the
+// content script never runs and the extension looks dead. Surface that.
+const permBanner = document.getElementById("perm-banner");
+const permGrantBtn = document.getElementById("perm-grant-btn");
+const ALL_ORIGINS = { origins: ["<all_urls>"] };
+
+async function checkHostPermission() {
+  try {
+    const granted = await browser.permissions.contains(ALL_ORIGINS);
+    permBanner.hidden = granted;
+  } catch {
+    permBanner.hidden = true; // browsers without the quirk (or test shims)
+  }
+}
+
+permGrantBtn.addEventListener("click", async () => {
+  try {
+    const granted = await browser.permissions.request(ALL_ORIGINS);
+    if (granted) permBanner.hidden = true;
+  } catch (err) {
+    console.error("AddAd: permission request failed:", err);
+  }
+});
+
+checkHostPermission();
+
 // ===================== THEME =====================
 const themeButtons = document.querySelectorAll(".theme-btn");
 

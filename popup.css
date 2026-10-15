@@ -84,6 +84,16 @@ body {
   color: var(--paper);
 }
 
+.menu-btn.grant {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.menu-btn.grant:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
 .menu-btn:last-of-type {
   margin-bottom: 0;
 }
