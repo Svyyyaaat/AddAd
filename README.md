@@ -3,7 +3,7 @@
 Make websites riddled with fake, humorous, ugly ads. On purpose.
 
 AddAd is a browser extension that injects obnoxious, 2003-grade parody ads into
-websites of your choosing. Blinking banners, bouncing DVD-logo popups, countdown
+websites of your choosing. Garish banners, bouncing DVD-logo popups, countdown
 close buttons, "HOT SINGLES" copy — the whole catalogue. Great for curing
 doom-scrolling, pranking your own browser, or appreciating your ad blocker.
 
@@ -15,7 +15,8 @@ harmed in the making of this extension.
 - **Pick your victims** — target specific domains (`example.com`, `*.reddit.com`)
 - **Intensity slider** — from *Low* to *CHAOS* to *NO RETURN* (1–200 ads per page)
 - **Per-site overrides** — give reddit the chaos it deserves while keeping your bank readable
-- **Three ad species** — inline banners wedged into the page, floating popups, and a bouncing ping-pong banner
+- **Whitelist** — spare specific pages even on targeted sites, paths included (`www.instagram.com/direct/inbox`)
+- **Three ad species** — inline banners wedged into the page, floating popups, and up to 10 bouncing ping-pong banners
 - **Countdown close buttons** — some ads make you wait, for authenticity
 - **Rickroll on click** — clicking an ad opens a configurable redirect URL
 - **The dodging Remove button** — try to un-target a site you've visited recently. Try.

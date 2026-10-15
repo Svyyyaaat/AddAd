@@ -52,27 +52,30 @@
 
   // ===================== GLOBALS =====================
   let settings = {
-    intensity: 40, // 1-100
+    intensity: 40, // 1-200
     reloadMinutes: 5,
     redirectURL: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     pingPong: true,
+    pingPongCount: 1,
+    whitelist: [],
   };
   const NUM_STYLES = 8;
   let injectedAds = [];
   let countdownIntervals = [];
-  let bouncingAd = null;
-  let bounceRAF = null;
+  let bounceRAFs = [];
   let lastURL = location.href;
   let reloadTimer = null;
 
-  // Legacy string intensities from before the slider existed
-  const LEGACY_INTENSITY = { low: 15, medium: 40, chaos: 75 };
-
   function normalizeIntensity(value) {
-    if (typeof value === "string" && LEGACY_INTENSITY[value]) return LEGACY_INTENSITY[value];
     const n = Number(value);
     if (!Number.isFinite(n)) return 40;
     return Math.max(1, Math.min(200, Math.round(n)));
+  }
+
+  function normalizeCount(value, fallback, max) {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return fallback;
+    return Math.max(0, Math.min(max, Math.round(n)));
   }
 
   function normalizeMinutes(value) {
@@ -373,13 +376,14 @@
     }
   }
 
-  // ===================== BOUNCING AD =====================
+  // ===================== BOUNCING ADS =====================
   function injectBouncingAd() {
-    if (bouncingAd) return;
     const ad = createAd(pick(AD_TEXTS), "bouncing");
     document.body.appendChild(ad);
     injectedAds.push(ad);
-    bouncingAd = ad;
+
+    const slot = bounceRAFs.length;
+    bounceRAFs.push(null);
 
     const adW = ad.offsetWidth || 280;
     const adH = ad.offsetHeight || 80;
@@ -390,7 +394,7 @@
 
     function animate() {
       if (!document.body.contains(ad)) {
-        bouncingAd = null;
+        bounceRAFs[slot] = null;
         return;
       }
 
@@ -412,10 +416,10 @@
       ad.style.left = x + "px";
       ad.style.top = y + "px";
 
-      bounceRAF = requestAnimationFrame(animate);
+      bounceRAFs[slot] = requestAnimationFrame(animate);
     }
 
-    bounceRAF = requestAnimationFrame(animate);
+    bounceRAFs[slot] = requestAnimationFrame(animate);
   }
 
   // ===================== CLEANUP =====================
@@ -426,11 +430,10 @@
     injectedAds = [];
     for (const id of countdownIntervals) clearInterval(id);
     countdownIntervals = [];
-    if (bounceRAF) {
-      cancelAnimationFrame(bounceRAF);
-      bounceRAF = null;
+    for (const raf of bounceRAFs) {
+      if (raf) cancelAnimationFrame(raf);
     }
-    bouncingAd = null;
+    bounceRAFs = [];
   }
 
   // ===================== DOMAIN MATCHING =====================
@@ -440,6 +443,26 @@
       return hostname === base || hostname.endsWith("." + base);
     }
     return hostname === pattern || hostname === "www." + pattern || "www." + hostname === pattern;
+  }
+
+  // ===================== WHITELIST =====================
+  // Entries can be a bare domain ("example.com"), a subdomain, or include a
+  // path prefix ("www.instagram.com/direct/inbox") — those pages never get
+  // ads even when the site itself is targeted.
+  function whitelistMatches(entry) {
+    const slash = entry.indexOf("/");
+    const entryHost = slash === -1 ? entry : entry.slice(0, slash);
+    const entryPath = slash === -1 ? "" : entry.slice(slash).replace(/\/+$/, "");
+
+    if (!domainMatches(location.hostname, entryHost)) return false;
+    if (!entryPath) return true;
+
+    const path = location.pathname.replace(/\/+$/, "");
+    return path === entryPath || path.startsWith(entryPath + "/");
+  }
+
+  function isWhitelisted() {
+    return settings.whitelist.some(whitelistMatches);
   }
 
   // ===================== PRESENCE HEARTBEAT =====================
@@ -470,11 +493,16 @@
 
   function injectAll() {
     removeAllAds();
+    if (isWhitelisted()) return;
 
     const counts = countsForIntensity(settings.intensity);
     injectInlineAds(counts.inline);
     injectFloatingAds(counts.floating);
-    if (settings.pingPong && Math.random() < counts.bounceChance) injectBouncingAd();
+    if (settings.pingPong) {
+      for (let i = 0; i < settings.pingPongCount; i++) {
+        if (Math.random() < counts.bounceChance) injectBouncingAd();
+      }
+    }
   }
 
   // ===================== PERIODIC RELOAD =====================
@@ -531,7 +559,8 @@
     if (/^(moz|chrome)-extension:$/.test(window.location.protocol)) return;
 
     browser.storage.local.get([
-      "websites", "siteSettings", "intensity", "reloadMinutes", "redirectURL", "pingPong",
+      "websites", "whitelist", "siteSettings", "intensity", "reloadMinutes", "redirectURL",
+      "pingPong", "pingPongCount",
     ]).then((data) => {
       const websites = data.websites || [];
       if (websites.length === 0) return;
@@ -546,6 +575,8 @@
       settings.reloadMinutes = normalizeMinutes(data.reloadMinutes);
       settings.redirectURL = data.redirectURL || "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
       settings.pingPong = data.pingPong !== false; // default true
+      settings.pingPongCount = normalizeCount(data.pingPongCount, 1, 10);
+      settings.whitelist = data.whitelist || [];
 
       // Per-site override
       const siteConf = (data.siteSettings || {})[matchedPattern];

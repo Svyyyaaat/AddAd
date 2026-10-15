@@ -1,40 +1,6 @@
-/* ===== AddAd Injected Ad Styles ===== */
-
-@keyframes addad-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
-
-@keyframes addad-shake {
-  0%, 100% { transform: translateX(0); }
-  10% { transform: translateX(-4px) rotate(-1deg); }
-  20% { transform: translateX(4px) rotate(1deg); }
-  30% { transform: translateX(-4px); }
-  40% { transform: translateX(4px); }
-  50% { transform: translateX(-2px); }
-  60% { transform: translateX(2px); }
-  70% { transform: translateX(-1px); }
-  80% { transform: translateX(1px); }
-  90% { transform: translateX(0); }
-}
-
-@keyframes addad-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.03); }
-}
-
-@keyframes addad-countdown-fill {
-  from { stroke-dashoffset: 100; }
-  to { stroke-dashoffset: 0; }
-}
-
-@keyframes addad-bounce-colors {
-  0% { background: linear-gradient(135deg, #ff0000, #ff8800); }
-  25% { background: linear-gradient(135deg, #ff00ff, #8800ff); }
-  50% { background: linear-gradient(135deg, #00ff00, #00ffff); }
-  75% { background: linear-gradient(135deg, #ffff00, #ff0000); }
-  100% { background: linear-gradient(135deg, #ff0000, #ff8800); }
-}
+/* ===== AddAd Injected Ad Styles =====
+   No CSS animations on purpose — combined flashing ads can cross
+   photosensitivity thresholds. The ping-pong banner moves via JS only. */
 
 .addad-banner {
   position: relative !important;
@@ -72,7 +38,9 @@
   padding: 18px 40px 18px 18px !important;
   z-index: 999999 !important;
   box-shadow: 8px 8px 0px #000, 0 0 30px rgba(255, 255, 0, 0.5) !important;
-  animation: addad-bounce-colors 3s linear infinite !important;
+  background: linear-gradient(135deg, #ff0000, #ff8800) !important;
+  color: #fff !important;
+  text-shadow: 1px 1px 0 #000 !important;
   border: 4px solid #000 !important;
   border-radius: 0 !important;
   pointer-events: auto !important;
@@ -181,7 +149,6 @@
   font-family: Impact, "Arial Black", sans-serif !important;
   font-weight: 900 !important;
   text-transform: uppercase !important;
-  animation: addad-blink 0.8s infinite !important;
 }
 
 .addad-style-2 {
@@ -190,7 +157,6 @@
   font-family: "Times New Roman", serif !important;
   font-weight: bold !important;
   font-style: italic !important;
-  animation: addad-shake 0.5s infinite !important;
 }
 
 .addad-style-3 {
@@ -213,7 +179,6 @@
   font-family: "Arial Black", sans-serif !important;
   font-weight: 900 !important;
   text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff !important;
-  animation: addad-pulse 0.4s infinite !important;
 }
 
 .addad-style-5 {
@@ -231,7 +196,6 @@
   border: 5px solid #ff0000 !important;
   font-family: "Georgia", serif !important;
   font-size: 20px !important;
-  animation: addad-shake 1s infinite !important;
 }
 
 .addad-style-7 {
@@ -241,13 +205,4 @@
   font-size: 18px !important;
   font-weight: bold !important;
   border: 4px double #000 !important;
-  animation: addad-pulse 0.6s infinite !important;
-}
-
-/* Respect the OS-level reduced-motion setting */
-@media (prefers-reduced-motion: reduce) {
-  .addad-banner,
-  .addad-banner * {
-    animation: none !important;
-  }
 }

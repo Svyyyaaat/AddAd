@@ -1,25 +1,15 @@
 // Works as a Firefox event page and as a Chrome MV3 service worker.
 globalThis.browser ??= globalThis.chrome;
 
-const LEGACY_INTENSITY = { low: 15, medium: 40, chaos: 75 };
-
-// Storage keys from removed features (Anki unlock), cleaned up on update
-const OBSOLETE_KEYS = ["ankiEnabled", "ankiURL", "ankiSelectedDecks", "ankiUnlockSites", "ankiDecksCache"];
-
 browser.runtime.onInstalled.addListener(() => {
-  browser.storage.local.remove(OBSOLETE_KEYS);
-
-  browser.storage.local.get(["websites", "intensity", "reloadMinutes", "redirectURL"]).then((data) => {
+  browser.storage.local.get(["websites", "whitelist", "intensity", "reloadMinutes", "redirectURL", "pingPongCount"]).then((data) => {
     const defaults = {};
     if (!data.websites) defaults.websites = [];
-    if (!data.intensity) {
-      defaults.intensity = 40;
-    } else if (typeof data.intensity === "string") {
-      // Migrate pre-slider low/medium/chaos values
-      defaults.intensity = LEGACY_INTENSITY[data.intensity] || 40;
-    }
+    if (!data.whitelist) defaults.whitelist = [];
+    if (!data.intensity) defaults.intensity = 40;
     if (!data.reloadMinutes) defaults.reloadMinutes = 5;
     if (!data.redirectURL) defaults.redirectURL = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+    if (!data.pingPongCount) defaults.pingPongCount = 1;
     if (Object.keys(defaults).length > 0) {
       browser.storage.local.set(defaults);
     }

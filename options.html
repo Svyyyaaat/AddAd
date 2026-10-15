@@ -28,6 +28,17 @@
     </section>
 
     <section class="section">
+      <h2>Whitelist</h2>
+      <p class="hint">Pages that never get ads, even on targeted sites. Subdomains and paths count — e.g. <code>www.instagram.com/direct/inbox</code></p>
+      <div class="input-row">
+        <input type="text" id="whitelist-input" placeholder="www.instagram.com/direct/inbox" autocomplete="off">
+        <button id="whitelist-add-btn">Add</button>
+      </div>
+      <ul id="whitelist-list"></ul>
+      <p id="whitelist-empty" class="empty">Nothing whitelisted. No mercy.</p>
+    </section>
+
+    <section class="section">
       <h2>Intensity</h2>
       <p class="hint">How many ads should each page get? Slide right at your own risk.</p>
       <div class="slider-wrap">
@@ -52,8 +63,11 @@
       <label class="toggle-row">
         <input type="checkbox" id="pingpong-toggle" checked>
         <span class="toggle-text">
-          <span class="toggle-label">Ping-Pong banner</span>
-          <span class="toggle-desc">The bouncing banner that drifts around the screen</span>
+          <span class="toggle-label">Ping-Pong banners</span>
+          <span class="toggle-desc">The bouncing banners that drift around the screen</span>
+        </span>
+        <span class="reload-input-wrap pingpong-count-wrap">
+          up to <input type="number" id="pingpong-count" min="1" max="10" value="1"> per page
         </span>
       </label>
     </section>

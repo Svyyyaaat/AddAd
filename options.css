@@ -7,10 +7,7 @@
   --ink-soft: #6b6557;
   --accent: #e02d1b;
   --accent-dark: #b81f10;
-  --highlight: #ffd82e;
   --ok: #1d8a3a;
-  --shadow: 5px 5px 0 var(--ink);
-  --shadow-sm: 3px 3px 0 var(--ink);
 }
 
 * {
@@ -49,15 +46,13 @@ body {
   border: 2px solid var(--ink);
   border-radius: 12px;
   background: var(--card);
-  box-shadow: var(--shadow-sm);
   flex-shrink: 0;
 }
 
 h1 {
   font-size: 34px;
   font-weight: 900;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  letter-spacing: 0.5px;
   line-height: 1.1;
 }
 
@@ -70,12 +65,9 @@ h1::after {
 }
 
 .subtitle {
-  display: inline-block;
   font-style: italic;
   font-size: 14px;
-  color: var(--ink);
-  background: linear-gradient(104deg, transparent 2%, var(--highlight) 3%, var(--highlight) 97%, transparent 98%);
-  padding: 1px 6px;
+  color: var(--ink-soft);
 }
 
 /* ===== Sections ===== */
@@ -84,7 +76,6 @@ h1::after {
   background: var(--card);
   border: 2px solid var(--ink);
   border-radius: 10px;
-  box-shadow: var(--shadow);
   padding: 22px 24px 24px;
   margin-bottom: 26px;
 }
@@ -133,8 +124,7 @@ input[type="text"] {
 }
 
 input[type="text"]:focus {
-  box-shadow: var(--shadow-sm);
-  transform: translate(-1px, -1px);
+  border-color: var(--accent);
 }
 
 input::placeholder {
@@ -152,25 +142,21 @@ button {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   cursor: pointer;
-  box-shadow: var(--shadow-sm);
-  transition: transform 0.08s, box-shadow 0.08s, background 0.08s;
+  transition: background 0.08s;
 }
 
 button:hover {
   background: var(--accent-dark);
 }
 
-button:active {
-  transform: translate(3px, 3px);
-  box-shadow: 0 0 0 var(--ink);
-}
-
-/* ===== Website list ===== */
-#website-list {
+/* ===== Website & whitelist lists ===== */
+#website-list,
+#whitelist-list {
   list-style: none;
 }
 
-#website-list li {
+#website-list li,
+#whitelist-list li {
   padding: 10px 14px;
   background: #fff;
   border: 2px solid var(--ink);
@@ -295,7 +281,8 @@ input[type="range"] {
   margin-bottom: 10px;
 }
 
-.reload-row input[type="number"] {
+.reload-row input[type="number"],
+.toggle-row input[type="number"] {
   width: 64px;
   padding: 8px 10px;
   border: 2px solid var(--ink);
@@ -304,6 +291,12 @@ input[type="range"] {
   color: var(--ink);
   font-size: 14px;
   outline: none;
+}
+
+.pingpong-count-wrap {
+  margin-left: auto;
+  color: var(--ink-soft);
+  font-size: 13px;
 }
 
 .reload-input-wrap {
@@ -421,13 +414,11 @@ input[type="range"] {
   left: 50%;
   transform: translateX(-50%);
   background: var(--ink);
-  color: var(--highlight);
-  border: 2px solid var(--highlight);
+  color: #fff;
   padding: 10px 20px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 800;
-  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.35);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.25s;
@@ -457,7 +448,6 @@ input[type="range"] {
 
   .section {
     padding: 16px 14px 18px;
-    box-shadow: var(--shadow-sm);
   }
 
   .masthead {

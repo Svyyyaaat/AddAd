@@ -12,14 +12,22 @@ const pingpongToggle = document.getElementById("pingpong-toggle");
 const intensitySlider = document.getElementById("intensity-slider");
 const intensityValue = document.getElementById("intensity-value");
 const reloadInput = document.getElementById("reload-input");
-
-const LEGACY_INTENSITY = { low: 15, medium: 40, chaos: 75 };
+const pingpongCountInput = document.getElementById("pingpong-count");
+const whitelistInput = document.getElementById("whitelist-input");
+const whitelistAddBtn = document.getElementById("whitelist-add-btn");
+const whitelistList = document.getElementById("whitelist-list");
+const whitelistEmpty = document.getElementById("whitelist-empty");
 
 function normalizeIntensity(value) {
-  if (typeof value === "string" && LEGACY_INTENSITY[value]) return LEGACY_INTENSITY[value];
   const n = Number(value);
   if (!Number.isFinite(n)) return 40;
   return Math.max(1, Math.min(200, Math.round(n)));
+}
+
+function normalizePingPongCount(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 1;
+  return Math.max(1, Math.min(10, Math.round(n)));
 }
 
 function domainMatches(hostname, pattern) {
@@ -37,6 +45,7 @@ function normalizeMinutes(value) {
 }
 
 let websites = [];
+let whitelist = [];
 let siteSettings = {}; // { [pattern]: { customIntensity, intensity, reloadMinutes } }
 
 // ===================== THE DODGING REMOVE BUTTON =====================
@@ -265,6 +274,53 @@ websiteInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") addBtn.click();
 });
 
+// ===================== WHITELIST =====================
+// Entries may include a subdomain and a path, e.g. www.instagram.com/direct/inbox
+function renderWhitelist() {
+  whitelistList.innerHTML = "";
+  whitelistEmpty.style.display = whitelist.length === 0 ? "block" : "none";
+
+  whitelist.forEach((entry, i) => {
+    const li = document.createElement("li");
+    const main = document.createElement("div");
+    main.className = "site-main";
+
+    const name = document.createElement("span");
+    name.className = "site-name";
+    name.textContent = entry;
+
+    const removeBtn = document.createElement("button");
+    removeBtn.className = "remove-btn";
+    removeBtn.textContent = "Remove";
+    removeBtn.addEventListener("click", () => {
+      whitelist.splice(i, 1);
+      browser.storage.local.set({ whitelist });
+      renderWhitelist();
+    });
+
+    main.appendChild(name);
+    main.appendChild(removeBtn);
+    li.appendChild(main);
+    whitelistList.appendChild(li);
+  });
+}
+
+whitelistAddBtn.addEventListener("click", () => {
+  const val = whitelistInput.value.trim();
+  if (!val) return;
+  const cleaned = val.replace(/^https?:\/\//, "").replace(/\/+$/, "").split(/[?#]/)[0];
+  if (cleaned && !whitelist.includes(cleaned)) {
+    whitelist.push(cleaned);
+    browser.storage.local.set({ whitelist });
+    renderWhitelist();
+    whitelistInput.value = "";
+  }
+});
+
+whitelistInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") whitelistAddBtn.click();
+});
+
 // ===================== GLOBAL INTENSITY / RELOAD =====================
 intensitySlider.addEventListener("input", () => {
   intensityValue.textContent = intensitySlider.value;
@@ -294,6 +350,16 @@ pingpongToggle.addEventListener("change", () => {
   browser.storage.local.set({ pingPong: pingpongToggle.checked });
 });
 
+pingpongCountInput.addEventListener("change", () => {
+  const v = normalizePingPongCount(pingpongCountInput.value);
+  pingpongCountInput.value = v;
+  browser.storage.local.set({ pingPongCount: v });
+});
+
+// The count input sits inside the toggle's <label>; keep clicks on it from
+// toggling the checkbox.
+pingpongCountInput.addEventListener("click", (e) => e.preventDefault());
+
 saveRedirectBtn.addEventListener("click", () => {
   const url = redirectInput.value.trim();
   if (url) {
@@ -305,19 +371,18 @@ saveRedirectBtn.addEventListener("click", () => {
 
 // ===================== LOAD SAVED DATA =====================
 browser.storage.local.get([
-  "websites", "siteSettings", "intensity", "reloadMinutes", "redirectURL", "pingPong",
+  "websites", "whitelist", "siteSettings", "intensity", "reloadMinutes", "redirectURL",
+  "pingPong", "pingPongCount",
 ]).then((data) => {
   websites = data.websites || [];
+  whitelist = data.whitelist || [];
   siteSettings = data.siteSettings || {};
   renderList();
+  renderWhitelist();
 
   const intensity = normalizeIntensity(data.intensity);
   intensitySlider.value = intensity;
   intensityValue.textContent = intensity;
-  // Persist migration of legacy low/medium/chaos strings
-  if (typeof data.intensity === "string") {
-    browser.storage.local.set({ intensity });
-  }
 
   reloadInput.value = normalizeMinutes(data.reloadMinutes);
 
@@ -326,4 +391,5 @@ browser.storage.local.get([
   }
 
   pingpongToggle.checked = data.pingPong !== false; // default true
+  pingpongCountInput.value = normalizePingPongCount(data.pingPongCount);
 });
