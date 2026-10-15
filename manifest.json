@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "AddAd",
-  "version": "1.4",
+  "version": "1.5",
   "description": "Make websites riddled with fake, humorous, ugly ads.",
   "icons": {
     "16": "icons/icon-16.png",

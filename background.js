@@ -2,6 +2,14 @@
 globalThis.browser ??= globalThis.chrome;
 
 browser.runtime.onInstalled.addListener(() => {
+  // Firefox MV3 treats host permissions as opt-in. If they're missing,
+  // open the settings page right away so the user sees the allow prompt
+  // without having to find the toolbar button. Chrome grants them at
+  // install, so this never fires there.
+  browser.permissions.contains({ origins: ["*://*/*"] }).then((granted) => {
+    if (!granted) browser.runtime.openOptionsPage();
+  }).catch(() => {});
+
   browser.storage.local.get(["websites", "whitelist", "intensity", "reloadMinutes", "redirectURL", "pingPongCount"]).then((data) => {
     const defaults = {};
     if (!data.websites) defaults.websites = [];

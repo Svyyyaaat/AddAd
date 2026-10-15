@@ -51,13 +51,16 @@ let siteSettings = {}; // { [pattern]: { customIntensity, intensity, reloadMinut
 // ===================== HOST PERMISSIONS =====================
 // Firefox MV3 treats host_permissions as opt-in: without the grant the
 // content script never runs and the extension looks dead. Surface that.
+// Request <all_urls> but check the http/https wildcard — contains() does
+// pattern-subset matching and the broad check can miss narrower grants.
 const permBanner = document.getElementById("perm-banner");
 const permGrantBtn = document.getElementById("perm-grant-btn");
-const ALL_ORIGINS = { origins: ["<all_urls>"] };
+const REQUEST_ORIGINS = { origins: ["<all_urls>"] };
+const CHECK_ORIGINS = { origins: ["*://*/*"] };
 
 async function checkHostPermission() {
   try {
-    const granted = await browser.permissions.contains(ALL_ORIGINS);
+    const granted = await browser.permissions.contains(CHECK_ORIGINS);
     permBanner.hidden = granted;
   } catch {
     permBanner.hidden = true; // browsers without the quirk (or test shims)
@@ -66,12 +69,15 @@ async function checkHostPermission() {
 
 permGrantBtn.addEventListener("click", async () => {
   try {
-    const granted = await browser.permissions.request(ALL_ORIGINS);
+    const granted = await browser.permissions.request(REQUEST_ORIGINS);
     if (granted) permBanner.hidden = true;
   } catch (err) {
     console.error("AddAd: permission request failed:", err);
   }
 });
+
+// Hide the banner if access gets granted elsewhere (popup, about:addons)
+browser.permissions?.onAdded?.addListener(checkHostPermission);
 
 checkHostPermission();
 

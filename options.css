@@ -140,8 +140,8 @@ h1::after {
   align-items: center;
   gap: 14px;
   flex-wrap: wrap;
-  background: var(--accent);
-  border: 2px solid var(--ink);
+  background: var(--card);
+  border: 2px dashed var(--accent);
   border-radius: 10px;
   padding: 14px 18px;
   margin-bottom: 26px;
@@ -154,18 +154,9 @@ h1::after {
 .perm-text {
   flex: 1;
   min-width: 200px;
-  color: #fff;
-  font-weight: 700;
-  font-size: 14px;
-}
-
-#perm-grant-btn {
-  background: var(--card);
   color: var(--ink);
-}
-
-#perm-grant-btn:hover {
-  background: var(--paper);
+  font-weight: 600;
+  font-size: 14px;
 }
 
 /* ===== Sections ===== */
