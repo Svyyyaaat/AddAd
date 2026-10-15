@@ -1,14 +1,61 @@
 // Works as a Firefox event page and as a Chrome MV3 service worker.
 globalThis.browser ??= globalThis.chrome;
 
+// ===================== PER-SITE PERMISSIONS =====================
+// Host access is requested per target site when the user adds it, instead
+// of demanding <all_urls> up front. The content script is registered
+// dynamically for exactly the origins that are both targeted and granted.
+
+function originsForPattern(pattern) {
+  if (pattern.startsWith("*.")) return ["*://" + pattern + "/*"];
+  if (pattern.startsWith("www.")) return ["*://" + pattern + "/*", "*://" + pattern.slice(4) + "/*"];
+  return ["*://" + pattern + "/*", "*://www." + pattern + "/*"];
+}
+
+async function syncRegisteredScripts() {
+  const { websites = [] } = await browser.storage.local.get("websites");
+
+  const matches = [];
+  for (const pattern of websites) {
+    const origins = originsForPattern(pattern);
+    try {
+      if (await browser.permissions.contains({ origins })) matches.push(...origins);
+    } catch {
+      // invalid pattern — skip
+    }
+  }
+
+  const existing = await browser.scripting.getRegisteredContentScripts({ ids: ["addad"] });
+
+  if (matches.length === 0) {
+    if (existing.length > 0) await browser.scripting.unregisterContentScripts({ ids: ["addad"] });
+    return;
+  }
+
+  const script = {
+    id: "addad",
+    matches,
+    js: ["content.js"],
+    css: ["content.css"],
+    runAt: "document_idle",
+    persistAcrossSessions: true,
+  };
+
+  if (existing.length > 0) {
+    await browser.scripting.updateContentScripts([script]);
+  } else {
+    await browser.scripting.registerContentScripts([script]);
+  }
+}
+
+// Re-sync whenever grants change (covers the popup closing mid-flow on grant
+// prompts) and on startup/update as a safety net.
+browser.permissions.onAdded.addListener(() => { syncRegisteredScripts(); });
+browser.permissions.onRemoved.addListener(() => { syncRegisteredScripts(); });
+browser.runtime.onStartup.addListener(() => { syncRegisteredScripts(); });
+
 browser.runtime.onInstalled.addListener(() => {
-  // Firefox MV3 treats host permissions as opt-in. If they're missing,
-  // open the settings page right away so the user sees the allow prompt
-  // without having to find the toolbar button. Chrome grants them at
-  // install, so this never fires there.
-  browser.permissions.contains({ origins: ["*://*/*"] }).then((granted) => {
-    if (!granted) browser.runtime.openOptionsPage();
-  }).catch(() => {});
+  syncRegisteredScripts();
 
   browser.storage.local.get(["websites", "whitelist", "intensity", "reloadMinutes", "redirectURL", "pingPongCount"]).then((data) => {
     const defaults = {};
@@ -44,5 +91,8 @@ async function recordSiteSeen(hostname) {
 browser.runtime.onMessage.addListener((msg) => {
   if (msg.type === "siteSeen") {
     recordSiteSeen(msg.hostname);
+  }
+  if (msg.type === "syncScripts") {
+    syncRegisteredScripts();
   }
 });

@@ -21,6 +21,7 @@ harmed in the making of this extension.
 - **Rickroll on click** — clicking an ad opens a configurable redirect URL
 - **The dodging Remove button** — try to un-target a site you've visited recently. Try.
 - **Light & dark themes** — auto (follows your OS), or forced light/dark
+- **Per-site permissions** — AddAd only asks for access to the sites you target, never the whole web
 - Works on **Firefox** (desktop & Android) and **Chromium-based** browsers
 
 ## Install

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "AddAd",
-  "version": "1.5",
+  "version": "1.6",
   "description": "Make websites riddled with fake, humorous, ugly ads.",
   "icons": {
     "16": "icons/icon-16.png",
@@ -9,16 +9,8 @@
     "48": "icons/icon-48.png",
     "128": "icons/icon-128.png"
   },
-  "permissions": ["storage"],
-  "host_permissions": ["<all_urls>"],
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "css": ["content.css"],
-      "run_at": "document_idle"
-    }
-  ],
+  "permissions": ["storage", "scripting"],
+  "optional_host_permissions": ["<all_urls>"],
   "background": {
     "scripts": ["background.js"],
     "service_worker": "background.js"
@@ -39,13 +31,13 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "addad@example.com",
-      "strict_min_version": "121.0",
+      "strict_min_version": "128.0",
       "data_collection_permissions": {
         "required": ["none"]
       }
     },
     "gecko_android": {
-      "strict_min_version": "121.0"
+      "strict_min_version": "128.0"
     }
   }
 }

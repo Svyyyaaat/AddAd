@@ -48,38 +48,36 @@ let websites = [];
 let whitelist = [];
 let siteSettings = {}; // { [pattern]: { customIntensity, intensity, reloadMinutes } }
 
-// ===================== HOST PERMISSIONS =====================
-// Firefox MV3 treats host_permissions as opt-in: without the grant the
-// content script never runs and the extension looks dead. Surface that.
-// Request <all_urls> but check the http/https wildcard — contains() does
-// pattern-subset matching and the broad check can miss narrower grants.
-const permBanner = document.getElementById("perm-banner");
-const permGrantBtn = document.getElementById("perm-grant-btn");
-const REQUEST_ORIGINS = { origins: ["<all_urls>"] };
-const CHECK_ORIGINS = { origins: ["*://*/*"] };
+// ===================== PER-SITE PERMISSIONS =====================
+// Each target site gets its own host permission, requested when the site
+// is added. The background script registers the content script for
+// whatever is granted.
+function originsForPattern(pattern) {
+  if (pattern.startsWith("*.")) return ["*://" + pattern + "/*"];
+  if (pattern.startsWith("www.")) return ["*://" + pattern + "/*", "*://" + pattern.slice(4) + "/*"];
+  return ["*://" + pattern + "/*", "*://www." + pattern + "/*"];
+}
 
-async function checkHostPermission() {
+async function siteHasPermission(pattern) {
   try {
-    const granted = await browser.permissions.contains(CHECK_ORIGINS);
-    permBanner.hidden = granted;
+    return await browser.permissions.contains({ origins: originsForPattern(pattern) });
   } catch {
-    permBanner.hidden = true; // browsers without the quirk (or test shims)
+    return true; // invalid pattern or no permissions API (test shims)
   }
 }
 
-permGrantBtn.addEventListener("click", async () => {
+async function requestSitePermission(pattern) {
   try {
-    const granted = await browser.permissions.request(REQUEST_ORIGINS);
-    if (granted) permBanner.hidden = true;
-  } catch (err) {
-    console.error("AddAd: permission request failed:", err);
+    const granted = await browser.permissions.request({ origins: originsForPattern(pattern) });
+    browser.runtime.sendMessage({ type: "syncScripts" }).catch(() => {});
+    return granted;
+  } catch {
+    return false;
   }
-});
+}
 
-// Hide the banner if access gets granted elsewhere (popup, about:addons)
-browser.permissions?.onAdded?.addListener(checkHostPermission);
-
-checkHostPermission();
+// Re-render rows when grants change (e.g. via the popup or about:addons)
+browser.permissions?.onAdded?.addListener(() => renderList());
 
 // ===================== THEME =====================
 const themeButtons = document.querySelectorAll(".theme-btn");
@@ -228,6 +226,18 @@ function renderList() {
     name.className = "site-name";
     name.textContent = site;
 
+    // If the browser hasn't granted access for this site yet, offer it inline
+    const allowBtn = document.createElement("button");
+    allowBtn.className = "allow-btn";
+    allowBtn.textContent = "Allow access";
+    allowBtn.hidden = true;
+    siteHasPermission(site).then((granted) => {
+      allowBtn.hidden = granted;
+    });
+    allowBtn.addEventListener("click", async () => {
+      if (await requestSitePermission(site)) allowBtn.hidden = true;
+    });
+
     const customLabel = document.createElement("label");
     customLabel.className = "site-custom-toggle";
     const customCheck = document.createElement("input");
@@ -255,9 +265,13 @@ function renderList() {
       saveWebsites();
       saveSiteSettings();
       renderList();
+      // Hand back this site's host permission and shrink the registration
+      browser.permissions?.remove({ origins: originsForPattern(site) }).catch(() => {});
+      browser.runtime.sendMessage({ type: "syncScripts" }).catch(() => {});
     });
 
     main.appendChild(name);
+    main.appendChild(allowBtn);
     main.appendChild(customLabel);
     main.appendChild(removeBtn);
     li.appendChild(main);
@@ -314,16 +328,20 @@ function renderList() {
   });
 }
 
-addBtn.addEventListener("click", () => {
+addBtn.addEventListener("click", async () => {
   const val = websiteInput.value.trim();
   if (!val) return;
-  const cleaned = val.replace(/^https?:\/\//, "").replace(/\/+$/, "");
-  if (cleaned && !websites.includes(cleaned)) {
-    websites.push(cleaned);
-    saveWebsites();
-    renderList();
-    websiteInput.value = "";
-  }
+  const cleaned = val.replace(/^https?:\/\//, "").replace(/\/+$/, "").split("/")[0];
+  if (!cleaned || websites.includes(cleaned)) return;
+
+  websites.push(cleaned);
+  saveWebsites();
+  websiteInput.value = "";
+
+  // Ask for this site's host permission while we still have the click
+  // gesture; the row renders with an "Allow access" chip if declined.
+  await requestSitePermission(cleaned);
+  renderList();
 });
 
 websiteInput.addEventListener("keydown", (e) => {
