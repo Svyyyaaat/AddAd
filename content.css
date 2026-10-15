@@ -1,0 +1,253 @@
+/* ===== AddAd Injected Ad Styles ===== */
+
+@keyframes addad-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes addad-shake {
+  0%, 100% { transform: translateX(0); }
+  10% { transform: translateX(-4px) rotate(-1deg); }
+  20% { transform: translateX(4px) rotate(1deg); }
+  30% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  50% { transform: translateX(-2px); }
+  60% { transform: translateX(2px); }
+  70% { transform: translateX(-1px); }
+  80% { transform: translateX(1px); }
+  90% { transform: translateX(0); }
+}
+
+@keyframes addad-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+@keyframes addad-countdown-fill {
+  from { stroke-dashoffset: 100; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes addad-bounce-colors {
+  0% { background: linear-gradient(135deg, #ff0000, #ff8800); }
+  25% { background: linear-gradient(135deg, #ff00ff, #8800ff); }
+  50% { background: linear-gradient(135deg, #00ff00, #00ffff); }
+  75% { background: linear-gradient(135deg, #ffff00, #ff0000); }
+  100% { background: linear-gradient(135deg, #ff0000, #ff8800); }
+}
+
+.addad-banner {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  padding: 16px 40px 16px 16px !important;
+  margin: 10px 0 !important;
+  border: 3px dashed #ff00ff !important;
+  cursor: pointer !important;
+  text-align: center !important;
+  font-size: 16px !important;
+  line-height: 1.4 !important;
+  z-index: 999990 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  max-width: 100vw !important;
+  pointer-events: auto !important;
+  isolation: isolate !important;
+}
+
+.addad-floating {
+  position: fixed !important;
+  width: auto !important;
+  max-width: min(340px, calc(100vw - 20px)) !important;
+  min-width: min(200px, calc(100vw - 20px)) !important;
+  padding: 20px 40px 20px 20px !important;
+  border-radius: 0 !important;
+  box-shadow: 6px 6px 0px #000, 0 0 20px rgba(255, 0, 255, 0.4) !important;
+  z-index: 999995 !important;
+}
+
+.addad-bouncing {
+  position: fixed !important;
+  width: min(280px, calc(100vw - 20px)) !important;
+  padding: 18px 40px 18px 18px !important;
+  z-index: 999999 !important;
+  box-shadow: 8px 8px 0px #000, 0 0 30px rgba(255, 255, 0, 0.5) !important;
+  animation: addad-bounce-colors 3s linear infinite !important;
+  border: 4px solid #000 !important;
+  border-radius: 0 !important;
+  pointer-events: auto !important;
+}
+
+/* Close button */
+.addad-close {
+  position: absolute !important;
+  top: 2px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(0,0,0,0.6) !important;
+  color: #fff !important;
+  border: 1px solid #fff !important;
+  border-radius: 0 !important;
+  cursor: pointer !important;
+  font-family: Arial, sans-serif !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+  z-index: 10 !important;
+  font-weight: bold !important;
+  pointer-events: auto !important;
+}
+
+.addad-close:hover {
+  background: #ff0000 !important;
+}
+
+.addad-close.addad-close-left {
+  left: 2px !important;
+}
+
+.addad-close.addad-close-right {
+  right: 2px !important;
+}
+
+.addad-close-disabled {
+  opacity: 0.3 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
+/* Countdown timer */
+.addad-countdown-wrap {
+  position: absolute !important;
+  top: 2px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0 !important;
+  z-index: 10 !important;
+}
+
+.addad-countdown-wrap.addad-close-left {
+  left: 2px !important;
+}
+
+.addad-countdown-wrap.addad-close-right {
+  right: 2px !important;
+}
+
+.addad-countdown-svg {
+  display: block !important;
+}
+
+.addad-countdown-track {
+  fill: none !important;
+  stroke: #333 !important;
+  stroke-width: 3 !important;
+}
+
+.addad-countdown-progress {
+  fill: none !important;
+  stroke: #fff !important;
+  stroke-width: 3 !important;
+  stroke-linecap: round !important;
+  stroke-dasharray: 100 !important;
+  stroke-dashoffset: 100 !important;
+  transform: rotate(-90deg) !important;
+  transform-origin: center !important;
+}
+
+.addad-countdown-text {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  font-size: 9px !important;
+  font-family: Arial, sans-serif !important;
+  font-weight: bold !important;
+  color: #fff !important;
+  pointer-events: none !important;
+}
+
+/* Style variations */
+.addad-style-0 {
+  background: linear-gradient(180deg, #ff6600, #ff0000) !important;
+  color: #fff !important;
+  font-family: "Comic Sans MS", "Comic Sans", cursive !important;
+  text-shadow: 2px 2px 0px #000 !important;
+}
+
+.addad-style-1 {
+  background: #ffff00 !important;
+  color: #ff0000 !important;
+  font-family: Impact, "Arial Black", sans-serif !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  animation: addad-blink 0.8s infinite !important;
+}
+
+.addad-style-2 {
+  background: linear-gradient(45deg, #ff00ff, #00ffff) !important;
+  color: #000 !important;
+  font-family: "Times New Roman", serif !important;
+  font-weight: bold !important;
+  font-style: italic !important;
+  animation: addad-shake 0.5s infinite !important;
+}
+
+.addad-style-3 {
+  background: #000 !important;
+  color: #0f0 !important;
+  font-family: "Courier New", monospace !important;
+  border-color: #0f0 !important;
+  text-shadow: 0 0 8px #0f0 !important;
+}
+
+.addad-style-4 {
+  background: repeating-linear-gradient(
+    45deg,
+    #ff0000,
+    #ff0000 10px,
+    #ffffff 10px,
+    #ffffff 20px
+  ) !important;
+  color: #000 !important;
+  font-family: "Arial Black", sans-serif !important;
+  font-weight: 900 !important;
+  text-shadow: 1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff !important;
+  animation: addad-pulse 0.4s infinite !important;
+}
+
+.addad-style-5 {
+  background: linear-gradient(to right, #8b00ff, #ff1493, #ff4500) !important;
+  color: #fff !important;
+  font-family: "Trebuchet MS", sans-serif !important;
+  font-weight: bold !important;
+  letter-spacing: 2px !important;
+  text-transform: uppercase !important;
+}
+
+.addad-style-6 {
+  background: #fff !important;
+  color: #333 !important;
+  border: 5px solid #ff0000 !important;
+  font-family: "Georgia", serif !important;
+  font-size: 20px !important;
+  animation: addad-shake 1s infinite !important;
+}
+
+.addad-style-7 {
+  background: linear-gradient(135deg, #ffd700, #ff8c00, #ff0000) !important;
+  color: #000 !important;
+  font-family: "Comic Sans MS", cursive !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+  border: 4px double #000 !important;
+  animation: addad-pulse 0.6s infinite !important;
+}
+
+/* Respect the OS-level reduced-motion setting */
+@media (prefers-reduced-motion: reduce) {
+  .addad-banner,
+  .addad-banner * {
+    animation: none !important;
+  }
+}

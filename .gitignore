@@ -1,0 +1,11 @@
+# Build artifacts
+web-ext-artifacts/
+*.xpi
+*.zip
+
+# AMO upload state (contains upload identifiers — keep local)
+.amo-upload-uuid
+
+# Local tooling config
+.claude/
+node_modules/

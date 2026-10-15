@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AddAd Preferences</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <header class="masthead">
+      <img src="icon.svg" alt="" class="masthead-icon">
+      <div>
+        <h1>AddAd</h1>
+        <p class="subtitle">Make the internet worse, on purpose.</p>
+      </div>
+    </header>
+
+    <section class="section">
+      <h2>Target websites</h2>
+      <p class="hint">Domains to riddle with ads — e.g. <code>example.com</code> or <code>*.reddit.com</code></p>
+      <div class="input-row">
+        <input type="text" id="website-input" placeholder="example.com" autocomplete="off">
+        <button id="add-btn">Add</button>
+      </div>
+      <ul id="website-list"></ul>
+      <p id="empty-msg" class="empty">No websites added yet. The internet is safe&hellip; for now.</p>
+    </section>
+
+    <section class="section">
+      <h2>Intensity</h2>
+      <p class="hint">How many ads should each page get? Slide right at your own risk.</p>
+      <div class="slider-wrap">
+        <div class="slider-row">
+          <input type="range" id="intensity-slider" min="1" max="200" value="40">
+          <span class="slider-value" id="intensity-value">40</span>
+        </div>
+        <div class="slider-marks">
+          <span class="slider-mark" data-value="15" style="left: 7.5%">Low</span>
+          <span class="slider-mark" data-value="40" style="left: 20%">Medium</span>
+          <span class="slider-mark mark-chaos" data-value="75" style="left: 37.5%">CHAOS</span>
+          <span class="slider-mark mark-noreturn" data-value="200" style="left: 100%">NO RETURN</span>
+        </div>
+      </div>
+      <div class="reload-row">
+        <label class="toggle-label" for="reload-input">Ad reload timing</label>
+        <span class="reload-input-wrap">
+          <input type="number" id="reload-input" min="1" max="120" value="5"> minutes
+        </span>
+        <span class="toggle-desc">How often the ads on a page get swapped for fresh ones</span>
+      </div>
+      <label class="toggle-row">
+        <input type="checkbox" id="pingpong-toggle" checked>
+        <span class="toggle-text">
+          <span class="toggle-label">Ping-Pong banner</span>
+          <span class="toggle-desc">The bouncing banner that drifts around the screen</span>
+        </span>
+      </label>
+    </section>
+
+    <section class="section">
+      <h2>Redirect page</h2>
+      <p class="hint">When someone clicks an ad, where should they go?</p>
+      <input type="text" id="redirect-input" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ" autocomplete="off">
+      <div class="redirect-actions">
+        <button id="save-redirect-btn">Save</button>
+        <span id="redirect-saved" class="saved-msg">Saved!</span>
+      </div>
+    </section>
+
+    <footer class="footer">AddAd — 100% certified organic fake ads. No real trackers inside.</footer>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
